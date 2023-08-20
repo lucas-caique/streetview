@@ -7,6 +7,7 @@ from typing import Generator, Tuple
 import requests
 from PIL import Image
 
+from tqdq import tqdm
 
 @dataclass
 class TileInfo:
@@ -60,12 +61,15 @@ def iter_tile_info(pano_id: str, zoom: int) -> Generator[TileInfo, None, None]:
     Generate a list of a panorama's tiles and their position.
     """
     width, height = get_width_and_height_from_zoom(zoom)
-    for x, y in itertools.product(range(width), range(height)):
-        yield TileInfo(
-            x=x,
-            y=y,
-            fileurl=make_download_url(pano_id=pano_id, zoom=zoom, x=x, y=y),
-        )
+    with tqdm(total=width*height, unit="tile") as pbar:
+        for x, y in itertools.product(range(width), range(height)):
+            yield TileInfo(
+                x=x,
+                y=y,
+                fileurl=make_download_url(pano_id=pano_id, zoom=zoom, x=x, y=y),
+            )
+            pbar.update(1)
+
 
 
 def iter_tiles(pano_id: str, zoom: int) -> Generator[Tile, None, None]:
