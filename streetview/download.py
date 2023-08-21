@@ -7,7 +7,7 @@ from typing import Generator, Tuple
 import requests
 from PIL import Image
 
-from tqdq import tqdm
+from tqdm import tqdm
 
 @dataclass
 class TileInfo:
